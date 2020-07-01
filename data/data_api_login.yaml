@@ -1,0 +1,79 @@
+---
+tests:
+  - case: 用户名与密码不匹配，验证响应中错误码与预期一致
+    http:
+      path: /event/api/login/
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36
+        Content-Type: application/x-www-form-urlencoded
+      params:
+        username:
+          abc
+        password:
+          admin
+    expected:
+      response:
+        status_code:
+          200
+        error_code:
+          10000
+
+  - case: 缺少用户名或密码，验证响应中错误码与预期一致
+    http:
+      path: /event/api/login/
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36
+        Content-Type: application/x-www-form-urlencoded
+      params:
+        username:
+          abc
+        password:
+
+    expected:
+      response:
+        status_code:
+          200
+        error_code:
+          10001
+
+  - case: 用户名与密码匹配，验证响应中错误码与预期一致
+    http:
+      path: /event/api/login/
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36
+        Content-Type: application/x-www-form-urlencoded
+      params:
+        username:
+          gaokang
+        password:
+          admin
+    expected:
+      response:
+        status_code:
+          200
+        error_code:
+          0
+
+  - case: 验证响应中token与数据库一致
+    http:
+      path: /event/api/login/
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36
+        Content-Type: application/x-www-form-urlencoded
+      params:
+        username:
+          caiying
+        password:
+          admin
+    expected:
+      response:
+        status_code:
+          200
+        error_code:
+          0
+        session:
+          123
