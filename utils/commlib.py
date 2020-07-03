@@ -9,6 +9,8 @@ Project description：Util of project
 
 import configparser
 import yaml
+import sqlite3
+import hashlib
 
 
 class ApiConfig(object):
@@ -37,6 +39,7 @@ class ApiConfig(object):
         except Exception as e:
             print('"{}" file add config failed, which section is "{}" key is "{}" value is {}, '
                   .format(self.file_path, section, key, value), e)
+            return False
         else:
             with open(self.file_path, 'w') as f:
                 self.config.write(f)
@@ -89,15 +92,27 @@ def get_test_data(test_data_path):
     return case, parameters
 
 
+def get_data_from_database(database, sql):
+    with sqlite3.connect(database) as conn:
+        c = conn.cursor()
+    # print("Opened database successfully")
+    try:
+        cursor = c.execute(sql)
+    except Exception as e:
+        print(e)
+    else:
+        return cursor
+
+
+def echo_hd5(uid, rstr, token):
+    md5 = hashlib.md5()
+    md5.update((str(uid)+str(rstr)+str(token)).encode('utf-8'))
+    key = md5.hexdigest()
+    return key
+
+
 if __name__ == "__main__":
     path = 'E:\\api_top\\config\\config_normal\\config.ini'
-    # username = get_config_data(path, 'login', 'username')
-    # print(username)
-    # password = get_config_data(path, 'login', 'password')
-    # print(password)
-    # # add_config_data(path, 'sessions', 'session1', 'topsuma1')
-    # session = get_config_data(path, 'sessions', 'session')
-    # print(session)
     my_config = ApiConfig(path)
     my_config.get_config_data('login', 'username')
     my_config.get_config_data('login', 'username1')

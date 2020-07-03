@@ -6,6 +6,8 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+allure_reports/
+allure_results/
 .Python
 build/
 develop-eggs/

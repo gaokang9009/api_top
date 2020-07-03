@@ -1,0 +1,82 @@
+---
+tests:
+  - case: 请求报文中缺参数，验证响应中错误码与预期一致
+    http:
+      path: /event/api/get_eventlist/
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36
+        uid:
+        key:
+      params:
+        title: abc
+        type: admin
+        price: 123
+        status: admin
+        rstr:
+    expected:
+      response:
+        status_code: 200
+        error_code: 10001
+      data:
+
+  - case: token验证失败，验证响应中错误码与预期一致
+    http:
+      path: /event/api/get_eventlist/
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36
+        uid: 0
+        key: 1234
+      params:
+        title: abc
+        type: admin
+        price: 123
+        status: admin
+        rstr: 123
+    expected:
+      response:
+        status_code: 200
+        error_code: 10008
+      data:
+
+  - case: token验证成功，没有符合的活动，验证响应中错误码与预期一致
+    http:
+      path: /event/api/get_eventlist/
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36
+        uid: input
+        key: input
+      params:
+        title: abc
+        type: admin
+        price: 123
+        status: admin
+        rstr: 123
+    expected:
+      response:
+        status_code: 200
+        error_code: 10016
+      data:
+
+  - case: token验证成功，存在符合的活动，验证响应中event_list、count与数据库一致
+    http:
+      path: /event/api/get_eventlist/
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36
+        uid: input
+        key: input
+      params:
+        title: 期
+        type: 文娱
+        price:
+        status:
+        rstr: 123
+    expected:
+      response:
+        status_code: 200
+        error_code: 0
+      data:
+        sql: SELECT * from api_event where title like "%{title}%" and type="{type}" and price<={price} and status={status}
