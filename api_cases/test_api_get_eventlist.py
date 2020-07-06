@@ -7,7 +7,6 @@ Created on 2020
 Project description：test of login interface
 """
 import os
-import base64
 import pytest
 import requests
 from pytest import assume
@@ -30,13 +29,13 @@ class Test_API_get_eventlist(object):
         else:
             print('can not get key and uid,test terminate!!!')
             assert False
-        # print('########### login key_id is {}, uid is {} '.format(key_id, uid))
+        print('########### login key_id is {}, uid is {} '.format(key_id, uid))
         headers = http['headers']
         params = http['params']
         headers['uid'] = uid if headers['uid'] == 'input' else '111'
         key_id = echo_hd5(uid, params['rstr'], key_id)
         headers['key'] = key_id if headers['key'] == 'input' else '111'
-        # print('########### headers key_id is {}, uid is {} '.format(headers['uid'], headers['key']))
+        print('########### headers key_id is {}, uid is {} '.format(headers['uid'], headers['key']))
         r = requests.request(method=method,
                              url=host,
                              headers=headers,
@@ -54,9 +53,19 @@ class Test_API_get_eventlist(object):
             for t in event_lists:
                 event_list.append(t[1])
             print('########### event_list', event_list)
-            assert response["count"] == len(response["event_list"]), "返回信息中的count与event_list中一致"
+            assert response["count"] == len(response["event_list"]), "返回信息中的count与event_list中数量一致"
             for event in response["event_list"]:
                 assert event['title'] in event_list, "返回信息中的event_list与预期一致"
+
+    def test_get_eventlist_check(self, env, get_key_uid):
+        api_config = env
+        host = api_config.get_config_data('host', 'url')
+        if get_key_uid:
+            key_id, uid = get_key_uid
+        else:
+            print('can not get key and uid,test terminate!!!')
+            assert False
+        print(host, '########### login key_id is {}, uid is {} '.format(key_id, uid))
 
 
 if __name__ == "__main__":

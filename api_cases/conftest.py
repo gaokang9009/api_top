@@ -56,7 +56,7 @@ def get_key_uid(env):
                       headers=headers,
                       data=data)
     response = r.json()
-    # print('########### login response :', response)
+    print('########### login response :', response)
     try:
         key_id_status = api_config.add_config_data('authentication', 'key_id', response['token'])
         uid_status = api_config.add_config_data('authentication', 'uid', str(response['uid']))
